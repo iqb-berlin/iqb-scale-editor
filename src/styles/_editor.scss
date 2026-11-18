@@ -1,0 +1,10 @@
+// Common layout for scale editors (imported by the editor components).
+:host { display: block; max-width: 960px; margin: 0 auto; padding: 16px; }
+.section { display: block; margin-bottom: 16px; }
+.full { width: 100%; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.grow { flex: 1; }
+.block { border: 1px solid var(--mat-sys-outline-variant); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.block-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.block-no { font: var(--mat-sys-title-small); }
+.warning { display: flex; align-items: center; gap: 4px; margin: 0 0 8px; color: var(--mat-sys-tertiary); }

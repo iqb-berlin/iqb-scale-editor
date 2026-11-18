@@ -1,0 +1,100 @@
+@let s = scale();
+<mat-card class="section">
+  <mat-card-header><mat-card-title>Allgemein</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <app-scale-id-input label="ID" testId="scale-id" hint="z. B. bs2024.ma.9.3 – Vorschläge: vorhandene Skalen-IDs, neue ID frei eingebbar"
+                        [value]="s.id" (valueChange)="patch({ id: $event })" />
+
+    <app-language-text-editor label="Name" [value]="s.name" [required]="true"
+                              (valueChange)="patch({ name: $event })" />
+
+    <app-optional-language-text-editor label="Beschreibung" [value]="s.description"
+                                       (valueChange)="setDescription($event)" />
+
+    <div class="row">
+      <mat-form-field>
+        <mat-label>Methode</mat-label>
+        <mat-select data-testid="scale-method" [value]="s.method ?? 'MAP'" (selectionChange)="changeMethod($event)">
+          @for (m of scaleMethods; track m) {
+            <mat-option [value]="m">{{ m }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="grow">
+        <mat-label>Öffentliches Vokabular (URL)</mat-label>
+        <input matInput [value]="s.publicVocabularyUrl ?? ''"
+               (input)="patch({ publicVocabularyUrl: $any($event.target).value || undefined })" />
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="section">
+  <mat-card-header><mat-card-title>Quellen</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <app-scale-id-list-editor itemLabel="Quell-Skala" [value]="s.sources" [minItems]="1" [exclude]="[s.id]"
+                              (valueChange)="patch({ sources: $event })" />
+  </mat-card-content>
+</mat-card>
+
+@if (showMappings()) {
+<mat-card class="section">
+  <mat-card-header>
+    <mat-card-title>Mappings</mat-card-title>
+    <mat-card-subtitle>Werden bei Methode MAP angewendet; die erste passende Regel gilt.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @for (m of s.mappings ?? []; track $index; let i = $index; let last = $last) {
+      <div class="block">
+        <div class="block-head">
+          <span class="block-no">Regel {{ i + 1 }}</span>
+          <mat-form-field subscriptSizing="dynamic">
+            <mat-label>Bedingung</mat-label>
+            <mat-select [value]="m.method" (selectionChange)="updateMapping(i, { method: $event.value })">
+              @for (mm of mappingMethods; track mm) {
+                <mat-option [value]="mm">{{ mappingMethodLabels[mm] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <span class="grow"></span>
+          <button mat-icon-button type="button" aria-label="Nach oben" [disabled]="i === 0"
+                  (click)="moveMapping(i, -1)"><mat-icon>arrow_upward</mat-icon></button>
+          <button mat-icon-button type="button" aria-label="Nach unten" [disabled]="last"
+                  (click)="moveMapping(i, 1)"><mat-icon>arrow_downward</mat-icon></button>
+          <button mat-icon-button type="button" aria-label="Regel entfernen"
+                  (click)="removeMapping(i)"><mat-icon>delete</mat-icon></button>
+        </div>
+        <app-string-list-editor label="Parameter" itemLabel="Parameter" [value]="m.parameters"
+                                (valueChange)="updateMapping(i, { parameters: $event })" />
+        @for (w of mappingWarnings(i); track $index) {
+          <p class="warning" data-testid="mapping-warning"><mat-icon>warning</mat-icon> {{ w }}</p>
+        }
+        <app-new-value-editor [value]="m.newValue" (valueChange)="updateMapping(i, { newValue: $event })" />
+      </div>
+    }
+    <button mat-stroked-button type="button" (click)="addMapping()"><mat-icon>add</mat-icon> Regel</button>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="section">
+  <mat-card-header>
+    <mat-card-title>Sonst-Wert (mappingsElse)</mat-card-title>
+    <mat-card-subtitle>Gilt, wenn keine Regel passt.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @if (s.mappingsElse; as elseValue) {
+      <app-new-value-editor [value]="elseValue" (valueChange)="setMappingsElse($event)" />
+      <button mat-button type="button" (click)="setMappingsElse(undefined)">
+        <mat-icon>remove</mat-icon> Sonst-Wert entfernen
+      </button>
+    } @else {
+      <button mat-stroked-button type="button" (click)="setMappingsElse({ value: 0 })">
+        <mat-icon>add</mat-icon> Sonst-Wert
+      </button>
+    }
+  </mat-card-content>
+</mat-card>
+}
+
+<app-validation-panel class="section" [scale]="s" [validation]="store.validation()"
+                      [warnings]="store.warnings()" [schemaLabel]="schemaLabel" />

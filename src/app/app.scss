@@ -1,0 +1,10 @@
+:host { display: flex; flex-direction: column; min-height: 100%; }
+.toolbar { position: sticky; top: 0; z-index: 10; gap: 8px; }
+.file { font: var(--mat-sys-body-medium); opacity: 0.85; margin-left: 16px; }
+.spacer { flex: 1; }
+.layout { display: flex; flex: 1; min-height: 0; }
+.sidebar { width: 300px; flex-shrink: 0; border-right: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low); overflow: auto; position: sticky; top: 64px;
+  height: calc(100vh - 64px); }
+main { flex: 1; min-width: 0; }
+.empty { text-align: center; margin-top: 64px; color: var(--mat-sys-on-surface-variant); }

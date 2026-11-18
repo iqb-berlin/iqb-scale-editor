@@ -1,0 +1,51 @@
+<mat-toolbar color="primary" class="toolbar">
+  <span class="title">IQB Skalen-Editor</span>
+  @if (doc.isIndex()) {
+    <span class="file" data-testid="file-name">
+      Index: {{ doc.fileName() ?? 'neu' }}@if (doc.dirty()) { *}
+    </span>
+  } @else if (doc.hasScale()) {
+    <span class="file" data-testid="file-name">
+      {{ doc.typeLabel() }}: {{ doc.fileName() ?? 'neu' }}@if (doc.dirty()) { *}
+    </span>
+  }
+  <span class="spacer"></span>
+  <button mat-button type="button" data-testid="new-menu" [matMenuTriggerFor]="newMenu">
+    <mat-icon>note_add</mat-icon> Neu
+  </button>
+  <mat-menu #newMenu="matMenu">
+    <button mat-menu-item type="button" data-testid="new-base" (click)="newScale('base')">{{ typeLabels.base }}</button>
+    <button mat-menu-item type="button" data-testid="new-derived" (click)="newScale('derived')">{{ typeLabels.derived }}</button>
+  </mat-menu>
+  <button mat-button type="button" (click)="open(fileInput)"><mat-icon>folder_open</mat-icon> Öffnen</button>
+  <button mat-button type="button" [disabled]="!doc.hasDocument()" (click)="save()"><mat-icon>save</mat-icon> Speichern</button>
+  @if (doc.canWriteFiles) {
+    <button mat-button type="button" [disabled]="!doc.hasDocument()" (click)="saveAs()"><mat-icon>save_as</mat-icon> Speichern unter…</button>
+  }
+  <input #fileInput type="file" accept=".json,application/json" hidden (change)="onFileSelected(fileInput)" />
+</mat-toolbar>
+
+<div class="layout">
+  @if (doc.isIndex()) {
+    <aside class="sidebar"><app-index-sidebar /></aside>
+  }
+  <main>
+    @if (doc.hasScale()) {
+      @switch (doc.type()) {
+        @case ('base') { <app-base-scale-editor /> }
+        @case ('derived') { <app-derived-scale-editor /> }
+      }
+    } @else if (doc.isIndex()) {
+      <div class="empty" data-testid="index-hint">
+        <p>Wähle links eine Skala zum Bearbeiten oder lege mit <strong>+</strong> eine neue an.</p>
+        <p>Gespeichert wird der gesamte Index; alle übrigen Inhalte bleiben unverändert.</p>
+      </div>
+    } @else {
+      <div class="empty" data-testid="empty-state">
+        <p>Keine Skala geöffnet.</p>
+        <p>Lege mit <strong>Neu</strong> eine Basis-Skala oder abgeleitete Skala an
+          oder öffne mit <strong>Öffnen</strong> eine Skalen-Datei oder einen acp-Index (wird erkannt).</p>
+      </div>
+    }
+  </main>
+</div>
