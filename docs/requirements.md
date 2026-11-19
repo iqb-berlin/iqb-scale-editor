@@ -27,6 +27,7 @@ Testfälle: siehe [test-cases.md](test-cases.md). Entscheidungen: siehe [decisio
 | REQ-014 | Index-weite Prüfungen (Warnungen) | umgesetzt | TC-240–TC-245, TC-248, TC-249 | DEC-028 |
 | REQ-015 | Skalen im Index umsortieren und zwischen Assessment-Teilen verschieben | umgesetzt | TC-246, TC-247, TC-250–TC-253 | DEC-029 |
 | REQ-016 | Skalen-ID-Eingabe mit Suche über vorhandene IDs, neue IDs frei eingebbar | umgesetzt | TC-260–TC-269 | DEC-031 |
+| REQ-017 | Auslieferung als eine einzige, offline lauffähige HTML-Datei | umgesetzt | TC-M11 | DEC-032 |
 | REQ-008 | Mappings/Sonst-Wert nur bei Methode MAP; Entfernen beim Methodenwechsel mit Rückfrage | umgesetzt | TC-110–TC-117 | DEC-015 |
 
 ## Details
@@ -120,6 +121,12 @@ Testfälle: siehe [test-cases.md](test-cases.md). Entscheidungen: siehe [decisio
 - Auswahl übernimmt die ID; jede andere (auch nicht existierende) ID kann frei eingegeben werden.
 - Bekannte IDs = alle Skalen des geöffneten acp-Index (aktualisiert sich beim Bearbeiten). Bei einer einzelnen Skalen-Datei gibt es keine Vorschläge (Q-016).
 - Nicht angeboten werden: der aktuell eingegebene Text selbst; bei Quell-Skalen die eigene ID der Skala.
+
+### REQ-017 Einzelne HTML-Datei
+- `npm run build:single` baut die App und erzeugt `dist/iqb-scale-editor/iqb-scale-editor.html` (Skript `scripts/inline-html.mjs`).
+- Eingebettet: Skripte, Stylesheets, `url(…)`-Referenzen in CSS (Schriften Roboto und Material Symbols, auch von Google Fonts), Favicon – als Inline-`<script>`/`<style>` bzw. `data:`-URIs.
+- Entfernt: `preconnect`-Hinweise, `<noscript>`-Fallbacks und das Angular-Skript zum asynchronen Laden der Styles.
+- Die Datei funktioniert ohne Netzwerk und per `file://`. Beim Bauen ist Netzzugriff nötig (Schriften); schlägt ein Abruf fehl, bricht das Skript mit Fehler ab.
 
 ### REQ-009 File System Access API mit Fallback
 - **Mit API-Unterstützung** (Chromium-Browser: Chrome, Edge):

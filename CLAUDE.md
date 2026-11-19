@@ -9,6 +9,7 @@ Angular-Editor (Angular 22, Material, Vitest) für Skalen nach `acp-scale-base@0
 - Zustand der geöffneten Skala nur über den Store des Typs (`BaseScaleStore`/`DerivedScaleStore`) mit immutablen Updates; App-Ebene nur über `ScaleDocumentService`.
 - Test-Fixtures/Mocks in `src/testing/` (nicht Teil des App-Builds).
 - Validierung ausschließlich über das JSON-Schema (`createSchemaValidator`).
+- Einzel-HTML: `npm run build:single` (→ `scripts/inline-html.mjs`); bei Lazy-Loading/Chunks müsste das Skript erweitert werden.
 - Tests: `npx ng test --watch=false`; Testnamen beginnen mit ihrer Testfall-ID (`TC-xxx`).
 
 ## Feature-Tracking (Pflicht)

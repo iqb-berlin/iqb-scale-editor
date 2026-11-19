@@ -35,6 +35,7 @@ Format: ID · Datum · Status (`beschlossen` / `vorläufig` / `offen` / `ersetzt
 | DEC-029 | 2026-11-18 | beschlossen | Q-014: Skalen per Drag & Drop (CDK) und Aktionsmenü umsortieren und zwischen Assessment-Teilen verschieben, nur innerhalb desselben Typs | Entscheidung User |
 | DEC-030 | 2026-11-18 | beschlossen | Q-012/Q-013: Im Index sind nur Skalen bearbeitbar (Metadaten/Teile schreibgeschützt); kein Anlegen neuer Indizes | Entscheidung User (vorerst) |
 | DEC-031 | 2026-11-19 | beschlossen | Skalen-ID-Felder (eigene ID, `sources`) mit Material-Autocomplete (`ScaleIdInput`, `ScaleIdListEditor` in shared), Freitext erlaubt. Vorschläge über `ScaleIdSuggestionsService` (shared), Quelle: Skalen des geöffneten Index | Wunsch User; Tippfehler bei Verweisen vermeiden |
+| DEC-032 | 2026-11-19 | beschlossen | Einzel-HTML per eigenem Node-Skript ohne Zusatzabhängigkeiten (`scripts/inline-html.mjs`) als Nachbearbeitung des Angular-Builds; Schriften werden beim Build geladen und als data-URIs eingebettet | Build erzeugt nur ein ES-Modul ohne Chunks, daher genügt einfaches Inlining; Datei soll offline laufen |
 
 ## Offene Fragen
 

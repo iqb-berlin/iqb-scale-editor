@@ -175,6 +175,7 @@ Die Test-ID steht jeweils am Anfang des Testnamens im `*.spec.ts`.
 | TC-267 | REQ-016 | Neue, nicht existierende ID frei eingebbar | auto | `src/app/shared/editor/scale-id-input.spec.ts` |
 | TC-268 | REQ-016 | Geöffneter Index liefert seine IDs, aktualisiert beim Bearbeiten | auto | `src/app/index/services/index-workspace.service.spec.ts` |
 | TC-269 | REQ-016 | Quell-Skalen: Vorschläge ohne eigene ID | auto | `src/app/derived/editor/derived-scale-editor.spec.ts` |
+| TC-M11 | REQ-017 | Manuell: `npm run build:single`, HTML-Datei ohne Netzwerk per Doppelklick öffnen → App startet, Icons und Schrift korrekt (am 2026-11-19 mit Headless-Chrome und blockiertem Netz geprüft) | manuell | – |
 | TC-M01 | REQ-001/004 | Manuell: Neue Skala anlegen, speichern, Datei wieder öffnen → identischer Inhalt | manuell | – |
 | TC-M02 | REQ-001 | Manuell: Datei mit kaputtem JSON öffnen → Snackbar-Fehler, Editor unverändert | manuell | – |
 | TC-M03 | REQ-001 | Manuell: Bei ungespeicherten Änderungen „Öffnen“/„Neu“ → Rückfrage | manuell | – |
