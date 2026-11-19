@@ -1,0 +1,106 @@
+@let s = scale();
+<mat-card class="section">
+  <mat-card-header><mat-card-title>Allgemein</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <app-scale-id-input label="ID" testId="scale-id" hint="z. B. bs2024.ma.9.3 – Vorschläge: vorhandene Skalen-IDs, neue ID frei eingebbar"
+                        [value]="s.id" (valueChange)="patch({ id: $event })" />
+
+    <app-optional-language-text-editor label="Name" [value]="s.name" (valueChange)="setText('name', $event)" />
+    <app-optional-language-text-editor label="Beschreibung" [value]="s.description"
+                                       (valueChange)="setText('description', $event)" />
+
+    <div class="row">
+      <mat-form-field class="grow">
+        <mat-label>Methode</mat-label>
+        <mat-select data-testid="scale-method" [value]="s.method" (selectionChange)="changeMethod($event)">
+          @for (m of methods; track m) {
+            <mat-option [value]="m">{{ methodLabels[m] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @switch (parametersKind()) {
+        @case ('maxValue') {
+          <mat-form-field>
+            <mat-label>Maximalwert (maxValue)</mat-label>
+            <input matInput type="number" data-testid="max-value" [value]="methodParameterValue()"
+                   (input)="setMethodParameter(optionalNumber($any($event.target)))" />
+            <mat-hint>leer = Anzahl der Items</mat-hint>
+          </mat-form-field>
+        }
+        @case ('codeValue') {
+          <mat-form-field>
+            <mat-label>Zu zählender Code (codeValue)</mat-label>
+            <input matInput type="number" data-testid="code-value" [value]="methodParameterValue()"
+                   (input)="setMethodParameter(optionalNumber($any($event.target)))" />
+          </mat-form-field>
+        }
+      }
+      <mat-form-field>
+        <mat-label>Mindestanzahl Items</mat-label>
+        <input matInput type="number" min="0" [value]="s.minItemNumber ?? ''"
+               (input)="patch({ minItemNumber: optionalNumber($any($event.target)) })" />
+        <mat-hint>leer/0 = unbegrenzt</mat-hint>
+      </mat-form-field>
+    </div>
+    @for (w of warnings('/methodParameters'); track $index) {
+      <p class="warning"><mat-icon>warning</mat-icon> {{ w }}</p>
+    }
+    @for (w of warnings('/minItemNumber'); track $index) {
+      <p class="warning" data-testid="min-item-warning"><mat-icon>warning</mat-icon> {{ w }}</p>
+    }
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="section">
+  <mat-card-header>
+    <mat-card-title>Items</mat-card-title>
+    <mat-card-subtitle>Items, deren Werte in diese Skala eingehen (mindestens eins).</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @for (item of s.items; track $index; let i = $index) {
+      <div class="block" data-testid="item">
+        <div class="block-head">
+          <span class="block-no">Item {{ i + 1 }}</span>
+          <mat-form-field class="grow" subscriptSizing="dynamic">
+            <mat-label>Item-ID</mat-label>
+            <input matInput [value]="item.id" (input)="updateItem(i, { id: $any($event.target).value })" />
+          </mat-form-field>
+          <mat-form-field class="weight" subscriptSizing="dynamic">
+            <mat-label>Gewicht</mat-label>
+            <input matInput type="number" placeholder="1" [value]="item.weight ?? ''"
+                   (input)="updateItem(i, { weight: optionalNumber($any($event.target)) })" />
+          </mat-form-field>
+          <button mat-icon-button type="button" aria-label="Item entfernen" [disabled]="s.items.length <= 1"
+                  (click)="removeItem(i)"><mat-icon>delete</mat-icon></button>
+        </div>
+        @for (p of item.parameters ?? []; track $index; let j = $index) {
+          <div class="row param">
+            <mat-form-field subscriptSizing="dynamic">
+              <mat-label>Parameter</mat-label>
+              <mat-select [value]="p.key" (selectionChange)="updateItemParameter(i, j, { key: $event.value })">
+                @for (k of parameterKeys; track k) {
+                  <mat-option [value]="k">{{ k }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="grow" subscriptSizing="dynamic">
+              <mat-label>Wert</mat-label>
+              <input matInput [value]="p.value ?? ''"
+                     (input)="updateItemParameter(i, j, { value: $any($event.target).value })" />
+            </mat-form-field>
+            <button mat-icon-button type="button" aria-label="Parameter entfernen"
+                    (click)="removeItemParameter(i, j)"><mat-icon>delete</mat-icon></button>
+          </div>
+        }
+        @for (w of warnings('/items/' + i + '/parameters'); track $index) {
+          <p class="warning" data-testid="item-warning"><mat-icon>warning</mat-icon> {{ w }}</p>
+        }
+        <button mat-button type="button" (click)="addItemParameter(i)"><mat-icon>add</mat-icon> Parameter</button>
+      </div>
+    }
+    <button mat-stroked-button type="button" (click)="addItem()"><mat-icon>add</mat-icon> Item</button>
+  </mat-card-content>
+</mat-card>
+
+<app-validation-panel class="section" [scale]="s" [validation]="store.validation()"
+                      [warnings]="store.warnings()" [schemaLabel]="schemaLabel" />

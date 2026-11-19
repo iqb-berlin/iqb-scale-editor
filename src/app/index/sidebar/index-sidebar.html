@@ -1,0 +1,57 @@
+@if (ws.index(); as index) {
+  <div class="package" data-testid="index-package">
+    <div class="package-id">{{ index.packageId || '(ohne packageId)' }}</div>
+    <div class="package-version">Version {{ index.version }}</div>
+  </div>
+  <div cdkDropListGroup>
+    @for (part of ws.parts(); track part.index) {
+      <section class="part" data-testid="index-part">
+        <h3 class="part-title">{{ part.label }}</h3>
+        @for (type of types; track type) {
+          <div class="group">
+            <div class="group-head">
+              <span>{{ typeLabels[type] }}</span>
+              <button mat-icon-button type="button" [attr.data-testid]="'add-' + type + '-' + part.index"
+                      [attr.aria-label]="typeLabels[type] + ': neue Skala'" (click)="ws.addScale(part.index, type)">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+            <div class="list" cdkDropList [cdkDropListData]="{ part: part.index, type }"
+                 [cdkDropListEnterPredicate]="sameType" (cdkDropListDropped)="drop($event)">
+              @for (e of part.scales[type]; track e.index; let first = $first; let last = $last) {
+                <div class="scale" data-testid="index-scale" cdkDrag [cdkDragData]="e" [class.selected]="isSelected(e)"
+                     (click)="ws.select(e)" (keydown.enter)="ws.select(e)" tabindex="0" role="button">
+                  <mat-icon class="handle" cdkDragHandle>drag_indicator</mat-icon>
+                  <mat-icon class="status" [class]="statusIcon(e)" [matTooltip]="statusText(e)">{{ statusIcon(e) }}</mat-icon>
+                  <span class="scale-id">{{ e.id || '(ohne ID)' }}</span>
+                  <button mat-icon-button type="button" class="menu" aria-label="Aktionen"
+                          [matMenuTriggerFor]="actions" (click)="$event.stopPropagation()">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions="matMenu">
+                    <button mat-menu-item type="button" data-testid="move-up" [disabled]="first"
+                            (click)="ws.moveScale(e, e.part, e.index - 1)"><mat-icon>arrow_upward</mat-icon> Nach oben</button>
+                    <button mat-menu-item type="button" data-testid="move-down" [disabled]="last"
+                            (click)="ws.moveScale(e, e.part, e.index + 1)"><mat-icon>arrow_downward</mat-icon> Nach unten</button>
+                    @for (p of otherParts(e); track p.index) {
+                      <button mat-menu-item type="button" data-testid="move-to-part" (click)="moveToPart(e, p.index)">
+                        <mat-icon>drive_file_move</mat-icon> Nach „{{ p.label }}“ verschieben
+                      </button>
+                    }
+                    <button mat-menu-item type="button" data-testid="remove-scale" (click)="remove(e)">
+                      <mat-icon>delete</mat-icon> Entfernen
+                    </button>
+                  </mat-menu>
+                </div>
+              } @empty {
+                <div class="none">keine</div>
+              }
+            </div>
+          </div>
+        }
+      </section>
+    } @empty {
+      <p class="none" data-testid="index-no-parts">Der Index enthält keine Assessment-Teile.</p>
+    }
+  </div>
+}

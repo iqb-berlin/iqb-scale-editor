@@ -24,3 +24,17 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# IDEs and editors
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Misc
+.sass-cache/
+__screenshots__/
+.DS_Store
+Thumbs.db
